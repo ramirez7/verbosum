@@ -1,6 +1,6 @@
 # verbosum
 
-> [*The proof is left as an exercise for the clanker*](https://en.wikipedia.org/wiki/Proof_by_intimidation)
+> [*The proof is left as an exercise for the clanker.*](https://en.wikipedia.org/wiki/Proof_by_intimidation)
 
 ## Usage
 
