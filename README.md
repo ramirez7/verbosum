@@ -6,5 +6,5 @@
 
 1. Leave typed holes (`_whatever`) in your code.
 2. Add additional directions in a `{- CLEARLY -}` block comment.
-3. (optional but recommended) commit your changes
+3. (optional but recommended) commit your changes.
 4. Run `verbosum FILE` and the LLM will implement all the holes per your `CLEARLY` instructions and inherent context in the code (types, comments, other code, etc). The `CLEARLY` comment will also be removed.
