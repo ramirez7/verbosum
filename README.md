@@ -1,1 +1,9 @@
 # verbosum
+
+> [The proof is left as an exercise for the clanker](https://en.wikipedia.org/wiki/Proof_by_intimidation)
+
+## Usage
+
+1. Leave typed holes (`_whatever`) in your code.
+2. Add additional directions in a `{- CLEARLY -}` block comment.
+3. Run `verbosum FILE` and the LLM will implement all the holes per your `CLEARLY` instructions and inherent context in the code (types, comments, other code, etc)
