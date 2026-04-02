@@ -42,6 +42,7 @@
           };
           settings = {
             # The `claude` test suite needs an ANTHROPIC_KEY
+            # https://github.com/MercuryTechnologies/claude/issues/4
             claude.check = false;
           };
         };
