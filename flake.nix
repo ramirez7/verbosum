@@ -5,6 +5,8 @@
     haskell-flake.url = "github:srid/haskell-flake";
     git-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks-nix.url = "github:cachix/git-hooks.nix";
+    all-cabal-hashes.url = "github:commercialhaskell/all-cabal-hashes/hackage";
+    all-cabal-hashes.flake = false;
   };
   outputs = inputs@{ self, nixpkgs, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -17,13 +19,16 @@
         pre-commit.settings.hooks = {
           cabal-gild.enable = true;
         };
-        
         haskellProjects.default = {
           projectFlakeName = "haskell-multi-nix";
+          basePackages = pkgs.haskellPackages.override {
+            all-cabal-hashes = inputs.all-cabal-hashes;
+          };
+
           # Want to override dependencies?
           # See https://haskell.flake.page/dependency
           packages = {
-            
+            claude.source = "1.4.0";
           };
           devShell = with pkgs; {
             mkShellArgs = {
@@ -36,6 +41,9 @@
             hoogle = false;
           };
           settings = {
+            # The `claude` test suite needs an ANTHROPIC_KEY
+            # https://github.com/MercuryTechnologies/claude/issues/4
+            claude.check = false;
           };
         };
 
