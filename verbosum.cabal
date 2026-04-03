@@ -1,29 +1,47 @@
 cabal-version: 3.0
 name: verbosum
 version: 0.1.0.0
--- synopsis:
--- description:
+synopsis: AI-powered typed hole filler for Haskell
+description:
+  Verbosum is a CLI tool that uses the Claude API to automatically fill
+  typed holes in Haskell code. Users leave @_holes@ in their code with
+  optional @{- CLEARLY ... -}@ directive comments, then run @verbosum [FILE...]@
+  to have an LLM fill them based on types, context, and instructions.
+
 license: BSD-3-Clause
 license-file: LICENSE
 author: Armando Ramirez
 maintainer: armando.m.ramirez@gmail.com
--- copyright:
 category: AI
 build-type: Simple
 extra-doc-files: CHANGELOG.md
 
--- extra-source-files:
 common warnings
   ghc-options: -Wall
 
 library
   import: warnings
-  exposed-modules: MyLib
-  -- other-modules:
-  -- other-extensions:
+  exposed-modules:
+    Verbosum
+    Verbosum.CLI
+    Verbosum.Claude
+    Verbosum.Filler
+    Verbosum.GHC
+    Verbosum.Parser
+    Verbosum.Types
+
   build-depends:
+    aeson,
     base ^>=4.20.2.0,
+    bytestring,
     claude,
+    containers,
+    directory,
+    filepath,
+    optparse-applicative,
+    process,
+    text,
+    vector,
 
   hs-source-dirs: src
   default-language: GHC2024
@@ -31,8 +49,6 @@ library
 executable verbosum
   import: warnings
   main-is: Main.hs
-  -- other-modules:
-  -- other-extensions:
   build-depends:
     base ^>=4.20.2.0,
     verbosum,
@@ -43,8 +59,6 @@ executable verbosum
 test-suite verbosum-test
   import: warnings
   default-language: GHC2024
-  -- other-modules:
-  -- other-extensions:
   type: exitcode-stdio-1.0
   hs-source-dirs: test
   main-is: Main.hs
