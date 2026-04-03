@@ -1,8 +1,6 @@
 module Main where
 
-import qualified MyLib (someFunc)
+import Verbosum (runCLI)
 
 main :: IO ()
-main = do
-  putStrLn "Hello, Haskell!"
-  MyLib.someFunc
+main = runCLI
