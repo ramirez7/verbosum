@@ -43,7 +43,7 @@ processFile config client filePath = do
     then pure $ Right source
     else do
       -- Get GHC diagnostics for type information
-      diagResult <- runGHCDiagnostics filePath
+      diagResult <- runGHCDiagnostics [GHCDeferTypedHoles] filePath
       case diagResult of
         Left err -> pure $ Left $ "GHC error: " <> err
         Right diags -> do

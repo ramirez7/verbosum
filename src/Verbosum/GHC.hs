@@ -4,6 +4,7 @@
 module Verbosum.GHC
   ( -- * GHC subprocess
     runGHCDiagnostics
+  , GHCOption(..)
   , typeCheckFile
 
     -- * Diagnostic parsing
@@ -23,11 +24,17 @@ import System.Process
 import System.Exit (ExitCode(..))
 import Verbosum.Types
 
+data GHCOption = GHCDeferTypedHoles deriving stock (Eq, Show)
+
+renderGHCOption :: GHCOption -> String
+renderGHCOption = \case
+  GHCDeferTypedHoles -> "-fdefer-typed-holes"
+
 -- | Run GHC with JSON diagnostics on a file
 -- Returns either an error or a list of diagnostics
-runGHCDiagnostics :: FilePath -> IO (Either Text [GHCDiagnostic])
-runGHCDiagnostics filePath = do
-  let args = ["-fdiagnostics-as-json", "-fno-code", "-fdefer-type-errors", filePath]
+runGHCDiagnostics :: [GHCOption] -> FilePath -> IO (Either Text [GHCDiagnostic])
+runGHCDiagnostics opts filePath = do
+  let args = ["-fdiagnostics-as-json", "-fno-code"] ++ fmap renderGHCOption opts ++ [filePath]
   (exitCode, _stdout, stderr) <- readProcessWithExitCode "ghc" args ""
   let output = BLC.pack stderr  -- GHC writes diagnostics to stderr
   case parseDiagnostics output of
@@ -171,7 +178,7 @@ extractValidFits msg =
 -- | Type check a file and return whether it succeeded along with diagnostics
 typeCheckFile :: FilePath -> IO (Bool, [GHCDiagnostic])
 typeCheckFile filePath = do
-  result <- runGHCDiagnostics filePath
+  result <- runGHCDiagnostics [] filePath
   case result of
     Left _ -> pure (False, [])
     Right diags ->
