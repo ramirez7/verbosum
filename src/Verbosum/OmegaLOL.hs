@@ -2,8 +2,9 @@
 
 module Verbosum.OmegaLOL where
 
-import Control.Monad.State.Lazy
 import Data.ByteString.Builder qualified as B
+import Data.Text.Lazy.Encoding qualified as TLE
+import Data.Text.Lazy qualified as TL
 
 data LC =
     V String
@@ -13,11 +14,14 @@ data LC =
 
 -- test ideas: property test that parens are balanced
 renderLC :: LC -> String
-renderLC = \case
-  V v -> v
-  F b lc -> mconcat ["(λ", b, ".", renderLC lc, ")"]
-  A f (x@A{}) -> mconcat ["(", renderLC f, " ", renderLC x, ")"]
-  A f x -> mconcat [renderLC f, " ", renderLC x]
+renderLC = TL.unpack . TLE.decodeUtf8 . B.toLazyByteString . buildLC
+
+buildLC :: LC -> B.Builder
+buildLC = \case
+  V v -> B.stringUtf8 v
+  F b lc -> mconcat ["(λ", B.stringUtf8 b, ".", buildLC lc, ")"]
+  A f (x@A{}) -> mconcat ["(", buildLC f, " ", buildLC x, ")"]
+  A f x -> mconcat [buildLC f, " ", buildLC x]
 
 -- (λx.x x) (λx.x x)
 -- (λx.x x) ((λx.x x) (λx.x x))
