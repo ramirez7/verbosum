@@ -16,15 +16,71 @@ extra-doc-files: CHANGELOG.md
 common warnings
   ghc-options: -Wall
 
+common exts
+  default-extensions:
+    AllowAmbiguousTypes
+    BangPatterns
+    BinaryLiterals
+    BlockArguments
+    ConstraintKinds
+    DataKinds
+    DefaultSignatures
+    DeriveAnyClass
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveTraversable
+    DerivingStrategies
+    DerivingVia
+    DuplicateRecordFields
+    EmptyCase
+    EmptyDataDecls
+    EmptyDataDeriving
+    FlexibleContexts
+    FlexibleInstances
+    FunctionalDependencies
+    GADTs
+    GeneralizedNewtypeDeriving
+    ImplicitParams
+    ImportQualifiedPost
+    ImpredicativeTypes
+    LambdaCase
+    MultiParamTypeClasses
+    MultiWayIf
+    NamedFieldPuns
+    NegativeLiterals
+    OverloadedLabels
+    OverloadedRecordDot
+    PatternSynonyms
+    RankNTypes
+    RecordWildCards
+    ScopedTypeVariables
+    StandaloneDeriving
+    StandaloneKindSignatures
+    StrictData
+    TupleSections
+    TypeApplications
+    TypeFamilies
+    TypeOperators
+    UndecidableInstances
+    ViewPatterns
+
 library
-  import: warnings
+  import: warnings, exts
   -- cabal-gild: discover src
-  exposed-modules: Verbosum.OmegaLOL
+  exposed-modules:
+    Verbosum.CLI
+    Verbosum.OmegaLOL
+
   -- other-modules:
   -- other-extensions:
   build-depends:
-    base ^>=4.20.2.0,
+    base,
+    bytestring,
     claude,
+    mtl,
+    optparse-applicative,
+    text,
 
   hs-source-dirs: src
   default-language: GHC2024

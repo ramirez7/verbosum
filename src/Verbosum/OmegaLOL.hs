@@ -1,4 +1,9 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Verbosum.OmegaLOL where
+
+import Control.Monad.State.Lazy
+import Data.ByteString.Builder qualified as B
 
 data LC =
     V String
@@ -22,5 +27,7 @@ omega x y = A (F x (A (V x) (V x))) (F y (A (V y) (V y)))
 omegaLOL :: [String] -> LC
 omegaLOL = \case
   [] -> error "bad"
+  x : [] -> omega x x
   x : y : [] -> omega x y
   x : xs -> A (F x (A (V x) (V x))) (omegaLOL xs)
+
