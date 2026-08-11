@@ -10,6 +10,7 @@ data LC =
     V String
   | F String LC
   | A LC LC
+  | W LC
   deriving stock (Show, Eq)
 
 -- test ideas: property test that parens are balanced
@@ -20,8 +21,15 @@ buildLC :: LC -> B.Builder
 buildLC = \case
   V v -> B.stringUtf8 v
   F b lc -> mconcat ["(λ", B.stringUtf8 b, ".", buildLC lc, ")"]
-  A f (x@A{}) -> mconcat ["(", buildLC f, " ", buildLC x, ")"]
+  A f (x@(stripLCW -> A{})) -> mconcat ["(", buildLC f, " ", buildLC x, ")"]
+  A f (x@(stripLCW -> F{})) -> mconcat ["(", buildLC f, " ", buildLC x, ")"]
   A f x -> mconcat [buildLC f, " ", buildLC x]
+  W x -> mconcat ["\n", buildLC x]
+
+stripLCW :: LC -> LC
+stripLCW = \case
+  W x -> stripLCW x
+  x -> x
 
 -- (λx.x x) (λx.x x)
 -- (λx.x x) ((λx.x x) (λx.x x))
@@ -35,3 +43,12 @@ omegaLOL = \case
   x : y : [] -> omega x y
   x : xs -> A (F x (A (V x) (V x))) (omegaLOL xs)
 
+omegaLOL2D :: [[String]] -> LC
+omegaLOL2D = \case
+  [] -> error "bad 2d"
+  ([] : rest) -> W (omegaLOL2D rest)
+  (x : []) : [] -> omega x x
+  (x : y : []) : [] -> omega x y
+  (x : xs) : [] -> A (F x (A (V x) (V x))) (omegaLOL2D (xs : []))
+  (x : []) : rest -> A (F x (A (V x) (V x))) (W (omegaLOL2D rest))
+  (x : xs) : rest -> A (F x (A (V x) (V x))) (omegaLOL2D (xs : rest))

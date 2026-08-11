@@ -4,6 +4,7 @@ import Options.Applicative
 import Verbosum.OmegaLOL
 import Control.Monad
 import System.IO
+import Data.List (dropWhileEnd)
 
 main :: IO ()
 main = join (execParser opts)
@@ -33,11 +34,11 @@ omegaLOLP = run <$> varsP <*> optional loopP <*> many (strArgument @String (meta
     run varSrc mLoopN args = do
       let loop = maybe id (\n -> mconcat . replicate n) mLoopN
       vars <- loop <$> case varSrc of
-               VarsFile fp -> words <$> readFile fp
-               VarsStdin -> words <$> hGetContents stdin
-               VarsArgs -> pure args
+               VarsFile fp -> dropWhileEnd null . fmap words . lines <$> readFile fp
+               VarsStdin -> dropWhileEnd null . fmap words . lines <$> hGetContents stdin
+               VarsArgs -> pure [args]
       
-      putStrLn $ renderLC $ omegaLOL vars
+      putStrLn $ renderLC $ omegaLOL2D vars
 
     loopP = option auto (long "loop" <> metavar "NUM")
 
